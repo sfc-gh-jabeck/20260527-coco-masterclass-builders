@@ -1,0 +1,11 @@
+SUPPLIER_ID,SUPPLIER_NAME,CONTACT_EMAIL,PHONE,CITY,STATE,COUNTRY,LEAD_TIME_DAYS
+SUP_32E4917AAFD0,Blizzard Trade Co,blizzard.trade.co@example.com,+61 445 928 990,Cradle Mountain,TAS,AUS,2
+SUP_73D80C9A44D9,Avalanche Gear Co,avalanche.gear.co@example.com,+61 499 532 448,Charlotte Pass,NSW,AUS,10
+SUP_1FB610071BB5,Mountain Fox Trading,mountain.fox.trading@example.com,+61 437 881 444,Charlotte Pass,NSW,AUS,5
+SUP_23269BF0423D,Alpine Edge Australia,alpine.edge.australia@example.com,+61 458 199 467,Perisher,NSW,AUS,13
+SUP_87E7E8BE5DAA,Basecamp Distribution,basecamp.distribution@example.com,+61 443 926 144,Cradle Mountain,TAS,AUS,25
+SUP_4BCBFF701030,White Peak Imports,white.peak.imports@example.com,+61 478 227 487,Mt Baw Baw,VIC,AUS,4
+SUP_9509921F33B8,Snowgum Wholesale,snowgum.wholesale@example.com,+61 447 949 743,Ben Lomond,TAS,AUS,21
+SUP_D9E364D60438,Powder House Supply,powder.house.supply@example.com,+61 483 296 821,Mt Hotham,VIC,AUS,4
+SUP_E2346FBDFE65,Southern Peaks Supply,southern.peaks.supply@example.com,+61 494 333 891,Thredbo,NSW,AUS,11
+SUP_D1F8AE4918F4,Summit Direct Supply,summit.direct.supply@example.com,+61 439 987 203,Perisher,NSW,AUS,14

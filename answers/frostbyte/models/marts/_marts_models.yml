@@ -1,0 +1,95 @@
+version: 2
+
+models:
+  - name: fct_inventory_health
+    description: "Fact table combining stock positions with product and store context. One row per store-product combination with calculated health metrics."
+    columns:
+      - name: STORE_ID
+        tests:
+          - not_null
+      - name: STORE_NAME
+        tests:
+          - not_null
+      - name: PRODUCT_ID
+        tests:
+          - not_null
+      - name: PRODUCT_NAME
+        tests:
+          - not_null
+      - name: CATEGORY
+        tests:
+          - not_null
+      - name: CATEGORY_CODE
+        tests:
+          - not_null
+      - name: SALES_REGION
+        tests:
+          - not_null
+      - name: STORE_TIER
+        tests:
+          - not_null
+      - name: SUPPLIER_NAME
+        tests:
+          - not_null
+      - name: QUANTITY_ON_HAND
+        tests:
+          - not_null
+      - name: REORDER_POINT
+        tests:
+          - not_null
+      - name: IS_BELOW_REORDER
+        tests:
+          - not_null
+      - name: DAYS_SINCE_LAST_COUNT
+        description: "Days between last count and current date"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: STOCK_VALUE
+        description: "QUANTITY_ON_HAND * UNIT_COST"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fct_procurement_summary
+    description: "Aggregated procurement metrics per supplier and product, including delivery performance."
+    columns:
+      - name: SUPPLIER_ID
+        tests:
+          - not_null
+      - name: SUPPLIER_NAME
+        tests:
+          - not_null
+      - name: PRODUCT_ID
+        tests:
+          - not_null
+      - name: PRODUCT_NAME
+        tests:
+          - not_null
+      - name: TOTAL_ORDERS
+        description: "Count of purchase orders"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: TOTAL_UNITS_ORDERED
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: TOTAL_SPEND
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: AVG_DELIVERY_DELAY_DAYS
+        description: "Average days between expected and actual delivery (positive = late)"
+      - name: ON_TIME_DELIVERY_RATE
+        description: "Percentage of orders delivered on or before expected date"
+      - name: CANCELLED_ORDER_COUNT
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0

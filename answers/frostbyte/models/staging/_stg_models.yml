@@ -1,0 +1,256 @@
+version: 2
+
+models:
+  - name: stg_stores
+    description: "Cleaned and typed store dimension from raw CSV ingest."
+    columns:
+      - name: STORE_ID
+        description: "Unique store identifier"
+        tests:
+          - not_null
+          - unique
+      - name: STORE_NAME
+        description: "Human-readable store name"
+        tests:
+          - not_null
+      - name: CITY
+        description: "Resort or town where store is located"
+        tests:
+          - not_null
+      - name: STATE
+        description: "State or territory code"
+        tests:
+          - not_null
+      - name: COUNTRY
+        description: "Country code (AUS standard)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["AUS", "NZL"]
+      - name: SALES_REGION
+        description: "Sales region based on geography"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ALPINE", "SOUTHERN", "HIGHLANDS"]
+      - name: STORE_TIER
+        description: "Store tier classification"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["T1", "T2", "T3", "T4"]
+      - name: OPENED_DATE
+        description: "Date the store opened"
+        tests:
+          - not_null
+      - name: SQUARE_METRES
+        description: "Store floor area in square metres"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: IS_ACTIVE
+        description: "Whether the store is currently operational"
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: "Cleaned product dimension with pricing and supplier linkage."
+    columns:
+      - name: PRODUCT_ID
+        description: "Unique product identifier"
+        tests:
+          - not_null
+          - unique
+      - name: PRODUCT_NAME
+        description: "Product display name"
+        tests:
+          - not_null
+      - name: CATEGORY
+        description: "Product category"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["Skis & Boards", "Boots & Bindings", "Outerwear & Apparel", "Helmets & Goggles", "Accessories", "Tuning & Maintenance"]
+      - name: CATEGORY_CODE
+        description: "Short code for product category"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["SKI", "BOO", "APP", "HEL", "ACC", "TUN"]
+      - name: UNIT_COST
+        description: "Cost price per unit"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: UNIT_PRICE
+        description: "Sell price per unit"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: SUPPLIER_ID
+        description: "FK to suppliers"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_suppliers')
+              field: SUPPLIER_ID
+      - name: WEIGHT_KG
+        description: "Product weight in kilograms"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: IS_ACTIVE
+        description: "Whether the product is currently sold"
+        tests:
+          - not_null
+
+  - name: stg_suppliers
+    description: "Cleaned supplier dimension."
+    columns:
+      - name: SUPPLIER_ID
+        description: "Unique supplier identifier"
+        tests:
+          - not_null
+          - unique
+      - name: SUPPLIER_NAME
+        description: "Supplier company name"
+        tests:
+          - not_null
+      - name: CONTACT_EMAIL
+        description: "Primary contact email"
+        tests:
+          - not_null
+      - name: PHONE
+        description: "Contact phone number"
+      - name: CITY
+        description: "Supplier city"
+      - name: STATE
+        description: "Supplier state"
+      - name: COUNTRY
+        description: "Supplier country (AUS standard)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["AUS", "NZL"]
+      - name: LEAD_TIME_DAYS
+        description: "Average lead time in days"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+
+  - name: stg_stock_levels
+    description: "Cleaned stock positions per store and product."
+    columns:
+      - name: STOCK_LEVEL_ID
+        description: "Unique stock record identifier"
+        tests:
+          - not_null
+          - unique
+      - name: STORE_ID
+        description: "FK to stores"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_stores')
+              field: STORE_ID
+      - name: PRODUCT_ID
+        description: "FK to products"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: PRODUCT_ID
+      - name: QUANTITY_ON_HAND
+        description: "Current quantity in stock"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: REORDER_POINT
+        description: "Threshold to trigger reorder"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: REORDER_QUANTITY
+        description: "Standard reorder quantity"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: LAST_COUNTED_DATE
+        description: "Date of last physical count"
+        tests:
+          - not_null
+      - name: IS_BELOW_REORDER
+        description: "Flag if quantity is below reorder point"
+        tests:
+          - not_null
+
+  - name: stg_purchase_orders
+    description: "Cleaned purchase order fact table."
+    columns:
+      - name: PO_ID
+        description: "Unique purchase order identifier"
+        tests:
+          - not_null
+          - unique
+      - name: STORE_ID
+        description: "FK to stores"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_stores')
+              field: STORE_ID
+      - name: PRODUCT_ID
+        description: "FK to products"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: PRODUCT_ID
+      - name: SUPPLIER_ID
+        description: "FK to suppliers"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_suppliers')
+              field: SUPPLIER_ID
+      - name: QUANTITY_ORDERED
+        description: "Units ordered"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+      - name: UNIT_COST
+        description: "Cost per unit at time of order"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: TOTAL_COST
+        description: "Total order cost"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: ORDER_DATE
+        description: "Date order was placed"
+        tests:
+          - not_null
+      - name: EXPECTED_DELIVERY_DATE
+        description: "Expected delivery date"
+        tests:
+          - not_null
+      - name: ACTUAL_DELIVERY_DATE
+        description: "Actual delivery date (null if not yet delivered)"
+      - name: STATUS
+        description: "Order status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["PENDING", "SHIPPED", "DELIVERED", "CANCELLED"]

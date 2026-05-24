@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: frostbyte_raw
+    database: FROSTBYTE_DB
+    schema: RAW
+    tables:
+      - name: STORES
+      - name: PRODUCTS
+      - name: SUPPLIERS
+      - name: STOCK_LEVELS
+      - name: PURCHASE_ORDERS

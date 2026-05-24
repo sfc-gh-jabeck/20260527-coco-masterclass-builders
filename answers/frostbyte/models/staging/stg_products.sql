@@ -1,0 +1,11 @@
+SELECT
+    PRODUCT_ID,
+    PRODUCT_NAME,
+    CATEGORY,
+    CATEGORY_CODE,
+    UNIT_COST,
+    UNIT_PRICE,
+    SUPPLIER_ID,
+    WEIGHT_KG,
+    IS_ACTIVE
+FROM {{ source('frostbyte_raw', 'PRODUCTS') }}
