@@ -36,6 +36,7 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 12px;
+            line-height: 1.2;
         }
 
         .hero p {
@@ -54,6 +55,39 @@
             font-size: 0.8rem;
             font-weight: 600;
             margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .part-divider {
+            background: var(--snow-dark);
+            color: white;
+            padding: 28px 40px;
+            text-align: center;
+        }
+
+        .part-divider h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .part-divider p {
+            font-size: 0.95rem;
+            opacity: 0.75;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .part-badge {
+            display: inline-block;
+            background: var(--snow-blue);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -104,6 +138,8 @@
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 0.85rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            word-break: break-all;
         }
 
         .timeline {
@@ -144,6 +180,7 @@
             justify-content: center;
             font-weight: 700;
             font-size: 0.9rem;
+            flex-shrink: 0;
         }
 
         .step-content {
@@ -172,12 +209,22 @@
             color: #475569;
         }
 
+        .spaced-block {
+            padding: 12px 0;
+        }
+
+        .spaced-block p {
+            margin: 0;
+            color: #475569;
+        }
+
         .prompt-block {
             position: relative;
             background: var(--code-bg);
             color: #CDD6F4;
             border-radius: 8px;
             padding: 16px 20px;
+            padding-right: 70px;
             margin: 12px 0;
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
             font-size: 0.85rem;
@@ -199,6 +246,7 @@
             font-size: 0.7rem;
             cursor: pointer;
             transition: background 0.2s;
+            white-space: nowrap;
         }
 
         .prompt-block .copy-btn:hover {
@@ -276,20 +324,85 @@
             font-size: 0.8rem;
         }
 
-        @media (max-width: 600px) {
-            .hero { padding: 40px 20px; }
-            .hero h1 { font-size: 1.8rem; }
-            .container { padding: 24px 16px; }
-            .step { padding-left: 44px; }
-            .step-content { padding: 16px 18px; }
+        @media (max-width: 640px) {
+            .hero {
+                padding: 36px 16px;
+            }
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            .hero p {
+                font-size: 0.95rem;
+            }
+            .part-divider {
+                padding: 20px 16px;
+            }
+            .part-divider h2 {
+                font-size: 1.3rem;
+            }
+            .container {
+                padding: 20px 12px;
+            }
+            .prereq-card {
+                padding: 18px 16px;
+            }
+            .step {
+                padding-left: 46px;
+                padding-bottom: 28px;
+            }
+            .step-content {
+                padding: 16px 14px;
+            }
+            .step-content h3 {
+                font-size: 1rem;
+            }
+            .prompt-block {
+                font-size: 0.78rem;
+                padding: 12px 14px;
+                padding-right: 64px;
+            }
+            .prompt-block .copy-btn {
+                font-size: 0.65rem;
+                padding: 3px 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .hero h1 {
+                font-size: 1.3rem;
+            }
+            .step {
+                padding-left: 36px;
+            }
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+            .step::before {
+                left: 13px;
+            }
         }
     </style>
 </head>
 <body>
+
+    <!-- ============================================================
+         HERO
+    ============================================================ -->
     <div class="hero">
         <span class="badge">Hands-On Lab</span>
-        <h1>Architecting Autonomous Workflows<br>with Cortex Code</h1>
-        <p>Build a production-grade inventory analytics pipeline for Frostbyte Ski Supply using natural language prompts, Skills, and dbt.</p>
+        <h1>Frostbyte Ski Supply<br>Cortex Code Masterclass</h1>
+        <p>Build autonomous data workflows and AI agents using Cortex Code CLI, Skills, and dbt.</p>
+    </div>
+
+    <!-- ============================================================
+         PART 0 — SETUP
+    ============================================================ -->
+    <div class="part-divider">
+        <span class="part-badge">Getting Started</span>
+        <h2>Setup — Clone the Repository</h2>
+        <p>Complete these steps before starting Part 1.</p>
     </div>
 
     <div class="container">
@@ -299,21 +412,59 @@
                 <li><strong>Cortex Code CLI</strong> installed (<code>cortex</code> command available in your terminal) and signed in to your Snowflake account</li>
                 <li>A role with <code>CREATE DATABASE</code>, <code>CREATE WAREHOUSE</code>, and <code>CREATE ROLE</code> privileges</li>
                 <li>Python 3.8+ available locally (for synthetic data generation)</li>
-                <li>Clone the lab repository into your working directory</li>
-                <li>Open the cloned folder in Cortex Code as your workspace</li>
+                <li><strong>git</strong> installed (<code>git --version</code> to confirm)</li>
             </ul>
-            <div class="note">
-                <strong>Tip:</strong> After cloning, verify you can see the <code>.snowflake/cortex/skills/</code> folder in your workspace — CoCo automatically discovers skills from this path.
-            </div>
         </div>
 
+        <div class="timeline">
+            <div class="step">
+                <div class="step-number">0</div>
+                <div class="step-content">
+                    <h3>Clone the Lab Repository</h3>
+                    <div class="time">~2 min</div>
+
+                    <p>Clone the repository and open it as your workspace in Cortex Code.</p>
+
+                    <div class="sub-step">
+                        <h4>Clone via HTTPS</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>git clone https://github.com/sfc-gh-jabeck/20260527-coco-masterclass-builders.git</div>
+                    </div>
+
+                    <div class="sub-step">
+                        <h4>Navigate into the project folder</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>cd 20260527-coco-masterclass-builders</div>
+                    </div>
+
+                    <div class="sub-step">
+                        <h4>Open in Cortex Code</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>cortex</div>
+                    </div>
+
+                    <div class="note">
+                        <strong>Tip:</strong> After opening, verify you can see the <code>.snowflake/cortex/skills/</code> folder in your workspace — CoCo automatically discovers skills from this path.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         PART 1
+    ============================================================ -->
+    <div class="part-divider">
+        <span class="part-badge">Part 1</span>
+        <h2>Accelerating Data Engineering with Cortex Code</h2>
+        <p>Build a production-grade inventory analytics pipeline using natural language prompts, Skills, and dbt.</p>
+    </div>
+
+    <div class="container">
         <div class="timeline">
             <!-- Step 1 -->
             <div class="step">
                 <div class="step-number">1</div>
                 <div class="step-content">
                     <h3>Setup Infrastructure</h3>
-                    <div class="time">14:15 – 14:25 (10 min)</div>
+                    <div class="time">10 min</div>
 
                     <div class="concept-card">
                         <h5>Key Concept — Skills</h5>
@@ -338,7 +489,7 @@
                 <div class="step-number">2</div>
                 <div class="step-content">
                     <h3>Generate &amp; Load Synthetic Data</h3>
-                    <div class="time">14:25 – 14:45 (20 min)</div>
+                    <div class="time">20 min</div>
 
                     <div class="concept-card">
                         <h5>Key Concept — Skills with Scripts</h5>
@@ -373,7 +524,7 @@
                 <div class="step-number">3</div>
                 <div class="step-content">
                     <h3>Build dbt Models</h3>
-                    <div class="time">14:45 – 15:05 (20 min)</div>
+                    <div class="time">20 min</div>
 
                     <div class="concept-card">
                         <h5>Key Concept — Bundled Skills + Skill Composition</h5>
@@ -413,7 +564,7 @@
                 <div class="step-number">4</div>
                 <div class="step-content">
                     <h3>dbt Tests</h3>
-                    <div class="time">15:05 – 15:15 (10 min)</div>
+                    <div class="time">10 min</div>
 
                     <div class="concept-card">
                         <h5>Key Concept — Contract-Driven Testing</h5>
@@ -438,6 +589,144 @@
                     </div>
                     <div class="note">
                         <strong>Expected result:</strong> All tests passing. CoCo will auto-fix any issues it finds.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         PART 2
+    ============================================================ -->
+    <div class="part-divider">
+        <span class="part-badge">Part 2</span>
+        <h2>Team Based Rapid Prototyping and Building AI Agents with Cortex Code CLI</h2>
+        <p>Use a custom skill to build a sandbox prototyping environment for natural language querying of your data.</p>
+    </div>
+
+    <div class="container">
+        <div class="prereq-card">
+            <h2>Prerequisites for Part 2</h2>
+            <ul>
+                <li>Completion of Part 1.</li>
+                <li>Cortex Code CLI installed and configured with .toml configuration file for user with ACCOUNTADMIN role</li>
+                <li>FROSTBYTE_DB.MARTS database.schema present with two tables populated</li>
+                <li>sandbox-frostbyte folder/skill copied to <code>~/.snowflake/cortex/skills</code></li>
+            </ul>
+            <div class="note">
+                <strong>Tip:</strong> Ask CoCo if it can find the skill to make sure it's present and aware of it.
+            </div>
+        </div>
+
+        <div class="timeline">
+            <!-- Step 1 -->
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Provision your Prototyping Sandbox Environment</h3>
+                    <div class="time">10 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Skills</h5>
+                        <p>A user in a particular business unit can follow a custom skill to clone data for a specific business unit in order to work on that data and perform tasks such as building an AI Agent.</p>
+                    </div>
+
+                    <p>Ask the following question of CoCo to invoke the skill...</p>
+                    <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Create a sandbox environment</div>
+                    <div class="note">
+                        <strong>Expected result:</strong> This should invoke our custom skill which will initially prompt you to select a team/business unit.
+                        <p><strong>For this lab, please select Retail / Store Operations</strong></p>
+                    </div>
+
+                    <div class="spaced-block">
+                        <p>The skill will confirm your selections and the names of the database objects.</p>
+                    </div>
+
+                    <div class="spaced-block">
+                        <p>Proceed with the DDL creation.</p>
+                    </div>
+
+                    <div class="note">
+                        <strong>Expected result:</strong> Sandbox will be provisioned and you can see the objects in Snowsight.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Generate Analytics Prototype (Semantic View, Cortex Analyst, and Cortex Agent)</h3>
+                    <div class="time">20 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Skills Workflow</h5>
+                        <p>A skill can provide a workflow and, based on user selections, can step through a process to generate Snowflake objects. In this case we want to select the option for an <strong>Analytics Prototype</strong>.</p>
+                    </div>
+
+                    <p>Continue on with the skill workflow and <strong>Select/type option E</strong></p>
+
+                    <p>When prompted for the business questions you want to answer, select the <strong>general purpose model</strong>.</p>
+
+                    <div class="spaced-block">
+                        <p>CoCo will continue on and generate the yaml and semantic view and test it. Once complete you can see the questions and answers. You can test the Cortex Analyst semantic model with an additional question such as:</p>
+                    </div>
+                    <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Test the semantic view with this question: Which suppliers have the most products below reorder point?</div>
+
+                    <div class="note">
+                        <strong>Expected Result:</strong> A list of suppliers and a count of products below reorder.
+                        <p>You can also view the semantic view in Snowsight under <strong>AI &amp; ML → Cortex Analyst → Semantic View → SANDBOX_FROSTBYTE_RETAIL_POC.MARTS</strong></p>
+                    </div>
+
+                    <div class="spaced-block">
+                        <p>Ask CoCo to create a Cortex Agent based on this semantic view now we know it works.</p>
+                    </div>
+                    <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Create a Cortex Agent based on this semantic view</div>
+
+                    <div class="note">
+                        <strong>Expected result:</strong> Successful creation of the agent.
+                        <p>You can go into <strong>Snowsight → AI &amp; ML → Agents</strong> and find your agent and <strong>Preview in Snowflake Intelligence</strong> and ask questions of the data.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Build a Streamlit App to Display the Data</h3>
+                    <div class="time">15 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Bundled Skills</h5>
+                        <p>CoCo can be used to create a Streamlit app/dashboard on your data in Snowflake.</p>
+                    </div>
+
+                    <p>Let's try another prototyping track and select building a Streamlit app.</p>
+
+                    <div class="sub-step">
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>I'd like to choose another prototyping track</div>
+                    </div>
+
+                    <p>Select <strong>Option C: Prototype App</strong></p>
+
+                    <p>In this case we are instructing CoCo to parse the image file, read the general style of the example dashboard and use that as a basis for our new Streamlit dashboard.</p>
+                    <p>You could build into your skill the corporate style you wish all Streamlit apps to follow.</p>
+
+                    <p>CoCo will suggest some data to visualise — Select <strong>Choose Something else</strong> and type...</p>
+
+                    <div class="sub-step">
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Display Inventory Health Dashboard data and use the ~/.snowflake/cortex/skills/sandbox-frostbyte/streamlit_template.png image as a guide for the style of the dashboard</div>
+                    </div>
+
+                    <div class="spaced-block">
+                        <p>CoCo will now create a compute pool and the external access integration (for any python libraries it needs). It will also create the file artifacts locally and then deploy them into Snowflake.</p>
+                    </div>
+                    <div class="note">
+                        <strong>Expected result:</strong> Click on the link provided by CoCo and view the Streamlit app.
+                    </div>
+                    <div class="spaced-block">
+                        <p>Optional: Continue on and have CoCo make changes to the Streamlit app...</p>
                     </div>
                 </div>
             </div>
