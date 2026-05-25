@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frostbyte HOL — Participant Guide</title>
+    <style>
+        :root {
+            --snow-blue: #29B5E8;
+            --snow-dark: #1B2A4A;
+            --snow-light: #F4F9FC;
+            --snow-accent: #11567F;
+            --code-bg: #1e1e2e;
+            --border: #E2E8F0;
+            --success: #10B981;
+            --step-size: 36px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--snow-light);
+            color: var(--snow-dark);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--snow-dark) 0%, var(--snow-accent) 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .hero .badge {
+            display: inline-block;
+            background: var(--snow-blue);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .part-divider {
+            background: var(--snow-dark);
+            color: white;
+            padding: 28px 40px;
+            text-align: center;
+        }
+
+        .part-divider h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .part-divider p {
+            font-size: 0.95rem;
+            opacity: 0.75;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .part-badge {
+            display: inline-block;
+            background: var(--snow-blue);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .prereq-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .prereq-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            color: var(--snow-accent);
+        }
+
+        .prereq-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .prereq-card li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+        }
+
+        .prereq-card li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .prereq-card code {
+            background: var(--snow-light);
+            border: 1px solid var(--border);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            word-break: break-all;
+        }
+
+        .timeline {
+            margin-top: 20px;
+        }
+
+        .step {
+            position: relative;
+            padding-left: 56px;
+            padding-bottom: 40px;
+        }
+
+        .step:last-child { padding-bottom: 0; }
+
+        .step::before {
+            content: "";
+            position: absolute;
+            left: 17px;
+            top: var(--step-size);
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .step:last-child::before { display: none; }
+
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: var(--step-size);
+            height: var(--step-size);
+            background: var(--snow-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .step-content h3 {
+            font-size: 1.2rem;
+            color: var(--snow-dark);
+            margin-bottom: 4px;
+        }
+
+        .step-content .time {
+            font-size: 0.8rem;
+            color: #64748B;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        .step-content p {
+            margin-bottom: 12px;
+            color: #475569;
+        }
+
+        .spaced-block {
+            padding: 12px 0;
+        }
+
+        .spaced-block p {
+            margin: 0;
+            color: #475569;
+        }
+
+        .prompt-block {
+            position: relative;
+            background: var(--code-bg);
+            color: #CDD6F4;
+            border-radius: 8px;
+            padding: 16px 20px;
+            padding-right: 70px;
+            margin: 12px 0;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .prompt-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #CDD6F4;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .prompt-block .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .prompt-block .copy-btn.copied {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .sub-step {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sub-step h4 {
+            font-size: 0.95rem;
+            color: var(--snow-accent);
+            margin-bottom: 8px;
+        }
+
+        .note {
+            background: #FEF9C3;
+            border: 1px solid #FDE047;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            margin-top: 12px;
+            color: #713F12;
+        }
+
+        .note strong { color: #92400E; }
+
+        .concept-card {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-left: 4px solid var(--snow-blue);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 0.88rem;
+            color: #1E40AF;
+        }
+
+        .concept-card h5 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--snow-accent);
+            margin-bottom: 6px;
+        }
+
+        .concept-card p {
+            color: #1E3A5F;
+            margin-bottom: 0;
+        }
+
+        .concept-card ul {
+            margin-top: 8px;
+            padding-left: 18px;
+            color: #1E3A5F;
+        }
+
+        .concept-card li {
+            margin-bottom: 4px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94A3B8;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 640px) {
+            .hero {
+                padding: 36px 16px;
+            }
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            .hero p {
+                font-size: 0.95rem;
+            }
+            .part-divider {
+                padding: 20px 16px;
+            }
+            .part-divider h2 {
+                font-size: 1.3rem;
+            }
+            .container {
+                padding: 20px 12px;
+            }
+            .prereq-card {
+                padding: 18px 16px;
+            }
+            .step {
+                padding-left: 46px;
+                padding-bottom: 28px;
+            }
+            .step-content {
+                padding: 16px 14px;
+            }
+            .step-content h3 {
+                font-size: 1rem;
+            }
+            .prompt-block {
+                font-size: 0.78rem;
+                padding: 12px 14px;
+                padding-right: 64px;
+            }
+            .prompt-block .copy-btn {
+                font-size: 0.65rem;
+                padding: 3px 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .hero h1 {
+                font-size: 1.3rem;
+            }
+            .step {
+                padding-left: 36px;
+            }
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+            .step::before {
+                left: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         HERO
+    ============================================================ -->
+    <div class="hero">
+        <span class="badge">Hands-On Lab</span>
+        <h1>Frostbyte Ski Supply<br>Cortex Code Masterclass</h1>
+        <p>Build autonomous data workflows and AI agents using Cortex Code CLI, Skills, and dbt.</p>
+    </div>
+
+    <!-- ============================================================
+         PART 0 — SETUP
+    ============================================================ -->
+    <div class="part-divider">
+        <span class="part-badge">Getting Started</span>
+        <h2>Setup — Clone the Repository</h2>
+        <p>Complete these steps before starting Part 1.</p>
+    </div>
+
+    <div class="container">
+        <div class="prereq-card">
+            <h2>Prerequisites</h2>
+            <ul>
+                <li><strong>Cortex Code CLI</strong> installed (<code>cortex</code> command available in your terminal) and signed in to your Snowflake account</li>
+                <li>A role with <code>CREATE DATABASE</code>, <code>CREATE WAREHOUSE</code>, and <code>CREATE ROLE</code> privileges</li>
+                <li>Python 3.8+ available locally (for synthetic data generation)</li>
+                <li><strong>git</strong> installed (<code>git --version</code> to confirm)</li>
+            </ul>
+        </div>
+
+        <div class="timeline">
+            <div class="step">
+                <div class="step-number">0</div>
+                <div class="step-content">
+                    <h3>Clone the Lab Repository</h3>
+                    <div class="time">~2 min</div>
+
+                    <p>Clone the repository and open it as your workspace in Cortex Code.</p>
+
+                    <div class="sub-step">
+                        <h4>Clone via HTTPS</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>git clone https://github.com/sfc-gh-jabeck/20260527-coco-masterclass-builders.git</div>
+                    </div>
+
+                    <div class="sub-step">
+                        <h4>Navigate into the project folder</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>cd 20260527-coco-masterclass-builders</div>
+                    </div>
+
+                    <div class="sub-step">
+                        <h4>Open in Cortex Code</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>cortex</div>
+                    </div>
+
+                    <div class="note">
+                        <strong>Tip:</strong> After opening, verify you can see the <code>.snowflake/cortex/skills/</code> folder in your workspace — CoCo automatically discovers skills from this path.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         PART 1
+    ============================================================ -->
+    <div class="part-divider">
+        <span class="part-badge">Part 1</span>
+        <h2>Accelerating Data Engineering with Cortex Code</h2>
+        <p>Build a production-grade inventory analytics pipeline using natural language prompts, Skills, and dbt.</p>
+    </div>
+
+    <div class="container">
+        <div class="timeline">
+            <!-- Step 1 -->
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Setup Infrastructure</h3>
+                    <div class="time">10 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Skills</h5>
+                        <p><strong>Skills</strong> are markdown files (and optional scripts) that live in <code>.snowflake/cortex/skills/</code> in your workspace. They teach CoCo domain-specific knowledge — naming conventions, code patterns, organisational policies — so it applies them automatically whenever relevant. Think of them as persistent prompt instructions that activate contextually.</p>
+                        <ul>
+                            <li>Skills are <strong>triggered automatically</strong> when CoCo detects a relevant task</li>
+                            <li>They encode <strong>institutional knowledge</strong> that would otherwise live in someone's head or a wiki</li>
+                            <li>Any team member who opens this workspace gets the same guardrails</li>
+                        </ul>
+                    </div>
+
+                    <p>Create the Snowflake database, schemas, warehouse, and roles for the Frostbyte project. CoCo will use the <code>naming-convention</code> skill to apply consistent naming automatically.</p>
+                    <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Create the Snowflake infrastructure for the Frostbyte ski supply inventory project — database, schemas, warehouse, and roles. Follow the naming convention skill.</div>
+                    <div class="note">
+                        <strong>Expected result:</strong> You should see <code>FROSTBYTE_DB</code> with schemas RAW, STAGING, MARTS, a warehouse <code>FROSTBYTE_XS_WH</code>, and two roles created.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Generate &amp; Load Synthetic Data</h3>
+                    <div class="time">20 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Skills with Scripts</h5>
+                        <p>Skills aren't limited to markdown instructions — they can include <strong>executable scripts</strong> (Python, SQL, bash) that CoCo runs on your behalf. The <code>generate-synthetic-data</code> skill contains both a <code>.md</code> file (instructions for CoCo) and a <code>generate_data.py</code> script (the actual generator). This pattern is powerful for:</p>
+                        <ul>
+                            <li><strong>Repeatable workflows</strong> — anyone can generate consistent test data</li>
+                            <li><strong>Guided execution</strong> — CoCo asks the right questions before running the script</li>
+                            <li><strong>End-to-end automation</strong> — generation + loading in a single conversation</li>
+                        </ul>
+                    </div>
+
+                    <p>Use the <code>generate-synthetic-data</code> skill to create realistic ski supply inventory data, then load it into Snowflake.</p>
+
+                    <div class="sub-step">
+                        <h4>2.1 — Generate CSVs</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Generate synthetic data for the Frostbyte ski supply inventory project using the generate-synthetic-data skill.</div>
+                        <p>CoCo will ask you how many records to generate. The defaults (5 stores, 50 products, 10 suppliers, 1000 stock records, 200 purchase orders) work well.</p>
+                    </div>
+
+                    <div class="sub-step">
+                        <h4>2.2 — Load into Snowflake</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Load all the generated CSV files into Snowflake tables in the FROSTBYTE_DB.RAW schema. Create the tables, stage, and file format as needed following the naming convention.</div>
+                    </div>
+                    <div class="note">
+                        <strong>Expected result:</strong> 5 tables in <code>FROSTBYTE_DB.RAW</code> — STORES, PRODUCTS, SUPPLIERS, STOCK_LEVELS, PURCHASE_ORDERS.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Build dbt Models</h3>
+                    <div class="time">20 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Bundled Skills + Skill Composition</h5>
+                        <p>CoCo has <strong>bundled skills</strong> for common frameworks like dbt — it already knows how to scaffold projects, write models, and deploy. By combining the bundled dbt skill with your custom <code>naming-convention</code> skill and the <code>data_contract.json</code>, CoCo produces models that are both technically correct <em>and</em> aligned with your organisation's standards.</p>
+                        <ul>
+                            <li><strong>Data contracts as input</strong> — the JSON contract acts as a machine-readable spec for what models should look like</li>
+                            <li><strong>Skill stacking</strong> — multiple skills compose together (naming + dbt + data modelling)</li>
+                            <li><strong>Creating skills from sessions</strong> — Step 3.2 captures decisions you made <em>during</em> this session as a new reusable skill</li>
+                        </ul>
+                    </div>
+
+                    <p>Create a complete dbt project with staging views and mart tables, driven by the data contract.</p>
+
+                    <div class="sub-step">
+                        <h4>3.1 — Build staging models</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Create a new dbt project for the Frostbyte inventory analytics platform. Using the data contract in data_contract.json, build the staging models. Follow the naming convention skill for all Snowflake object references.</div>
+                    </div>
+
+                    <div class="sub-step">
+                        <h4>3.2 — Create a data-modelling skill</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Create a new CoCo skill called "data-modelling" that captures the dbt patterns, conventions, and decisions we've used so far in this session — project structure, model naming, materialisation choices, and the Frostbyte naming convention.</div>
+                        <p>This captures your session context into a reusable skill for future work.</p>
+                    </div>
+
+                    <div class="sub-step">
+                        <h4>3.3 — Build marts &amp; deploy</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Using the data contract in data_contract.json and the data-modelling skill, build the marts models (fct_inventory_health and fct_procurement_summary) in the dbt project. Then deploy the full project to Snowflake.</div>
+                    </div>
+                    <div class="note">
+                        <strong>Expected result:</strong> Views in <code>FROSTBYTE_DB.STAGING</code> and tables in <code>FROSTBYTE_DB.MARTS</code> visible in Snowsight.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>dbt Tests</h3>
+                    <div class="time">10 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Contract-Driven Testing</h5>
+                        <p>Rather than writing tests by hand, you use the <strong>data contract as the single source of truth</strong> for what quality rules should exist. CoCo reads the contract and generates the correct dbt YAML tests — not_null, unique, accepted_values, relationships, and range checks. This means:</p>
+                        <ul>
+                            <li><strong>Zero manual test authoring</strong> — the contract defines it, CoCo implements it</li>
+                            <li><strong>Self-healing pipelines</strong> — when tests fail, CoCo's auto-fix loop diagnoses and repairs the issue</li>
+                            <li><strong>Living documentation</strong> — your contract is always in sync with your actual test suite</li>
+                        </ul>
+                    </div>
+
+                    <p>Generate comprehensive data quality tests from the contract and run them to validate your pipeline.</p>
+
+                    <div class="sub-step">
+                        <h4>4.1 — Generate tests</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Using the data contract in data_contract.json, add dbt tests for all staging and marts models. Include not_null, unique, accepted_values, relationships, and accepted_range tests as defined in the contract.</div>
+                    </div>
+
+                    <div class="sub-step">
+                        <h4>4.2 — Run tests</h4>
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Run all dbt tests and fix any failures.</div>
+                    </div>
+                    <div class="note">
+                        <strong>Expected result:</strong> All tests passing. CoCo will auto-fix any issues it finds.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         PART 2
+    ============================================================ -->
+    <div class="part-divider">
+        <span class="part-badge">Part 2</span>
+        <h2>Team Based Rapid Prototyping and Building AI Agents with Cortex Code CLI</h2>
+        <p>Use a custom skill to build a sandbox prototyping environment for natural language querying of your data.</p>
+    </div>
+
+    <div class="container">
+        <div class="prereq-card">
+            <h2>Prerequisites for Part 2</h2>
+            <ul>
+                <li>Completion of Part 1.</li>
+                <li>Cortex Code CLI installed and configured with .toml configuration file for user with ACCOUNTADMIN role</li>
+                <li>FROSTBYTE_DB.MARTS database.schema present with two tables populated</li>
+                <li>sandbox-frostbyte folder/skill copied to <code>~/.snowflake/cortex/skills</code></li>
+            </ul>
+            <div class="note">
+                <strong>Tip:</strong> Ask CoCo if it can find the skill to make sure it's present and aware of it.
+            </div>
+        </div>
+
+        <div class="timeline">
+            <!-- Step 1 -->
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Provision your Prototyping Sandbox Environment</h3>
+                    <div class="time">10 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Skills</h5>
+                        <p>A user in a particular business unit can follow a custom skill to clone data for a specific business unit in order to work on that data and perform tasks such as building an AI Agent.</p>
+                    </div>
+
+                    <p>Ask the following question of CoCo to invoke the skill...</p>
+                    <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Create a sandbox environment</div>
+                    <div class="note">
+                        <strong>Expected result:</strong> This should invoke our custom skill which will initially prompt you to select a team/business unit.
+                        <p><strong>For this lab, please select Retail / Store Operations</strong></p>
+                    </div>
+
+                    <div class="spaced-block">
+                        <p>The skill will confirm your selections and the names of the database objects.</p>
+                    </div>
+
+                    <div class="spaced-block">
+                        <p>Proceed with the DDL creation.</p>
+                    </div>
+
+                    <div class="note">
+                        <strong>Expected result:</strong> Sandbox will be provisioned and you can see the objects in Snowsight.
+                    </div>
+                </div>
+            </div>
+            <!-- Step 2 -->
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Extract key information from Supplier Documents</h3>
+                    <div class="time">10 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Unstructued Data Extraction with Cortex</h5>
+                        <p>Turn unstructured documents into actionable structured information</p>
+                    </div>
+
+                    <p>Continue on with the skill workflow and <strong>Select/type option G (Document AI)</strong></p>
+
+                    <p>Provide the local file location of the directory that contains the PDFs.</p>
+
+                    <div class="spaced-block">
+                        <p>CoCo will create a named stage, upload the files and then use AI_EXTRACT to extract key data fiels and create a new table with this data</p>
+                    </div>
+
+                    <div class="note">
+                        <strong>Expected Result:</strong> Check in Snowsight under the MARTS schema of your sandbox database for the newly created Dim_Supplier... table
+                        </div>
+
+                </div>
+            </div>
+            <!-- Step 3 -->
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Generate Analytics Prototype (Semantic View, Cortex Analyst, and Cortex Agent)</h3>
+                    <div class="time">20 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Skills Workflow</h5>
+                        <p>A skill can provide a workflow and, based on user selections, can step through a process to generate Snowflake objects. In this case we want to select the option for an <strong>Analytics Prototype</strong>.</p>
+                    </div>
+
+                    <p>Continue on with the skill workflow and <strong>Select/type option E</strong></p>
+
+                    <p>When prompted for the business questions you want to answer, select <strong>Something else.../strong> and type:</p>
+
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Create a semantic view based on the three tables in the MARTS schema.</div>
+
+
+                    <div class="spaced-block">
+                        <p>CoCo will continue on and generate the yaml and semantic view and test it. Once complete you can see the questions and answers. You can test the Cortex Analyst semantic model with an additional question such as:</p>
+                    </div>
+                    <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Test the semantic view with this question: Which suppliers have the most products below reorder point?</div>
+
+                    <div class="note">
+                        <strong>Expected Result:</strong> A list of suppliers and a count of products below reorder.
+                        <p>You can also view the semantic view in Snowsight under <strong>AI &amp; ML → Cortex Analyst → Semantic View → SANDBOX_FROSTBYTE_RETAIL_POC.MARTS</strong></p>
+                    </div>
+
+                    <div class="spaced-block">
+                        <p>Ask CoCo to create a Cortex Agent based on this semantic view now we know it works.</p>
+                    </div>
+                    <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Create a Cortex Agent based on this semantic view</div>
+
+                    <div class="note">
+                        <strong>Expected result:</strong> Successful creation of the agent.
+                        <p>You can go into <strong>Snowsight → AI &amp; ML → Agents</strong> and find your agent and <strong>Preview in Snowflake Intelligence</strong> and ask questions of the data.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Build a Streamlit App to Display the Data</h3>
+                    <div class="time">15 min</div>
+
+                    <div class="concept-card">
+                        <h5>Key Concept — Bundled Skills</h5>
+                        <p>CoCo can be used to create a Streamlit app/dashboard on your data in Snowflake.</p>
+                    </div>
+
+                    <p>Let's try another prototyping track and select building a Streamlit app.</p>
+
+                    <div class="sub-step">
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>I'd like to choose another prototyping track</div>
+                    </div>
+
+                    <p>Select <strong>Option C: Prototype App</strong></p>
+
+                    <p>In this case we are instructing CoCo to parse the image file, read the general style of the example dashboard and use that as a basis for our new Streamlit dashboard.</p>
+                    <p>You could build into your skill the corporate style you wish all Streamlit apps to follow.</p>
+
+                    <p>CoCo will suggest some data to visualise — Select <strong>Choose Something else</strong> and type...</p>
+
+                    <div class="sub-step">
+                        <div class="prompt-block"><button class="copy-btn" onclick="copyPrompt(this)">Copy</button>Display Inventory Health Dashboard data and use the ~/.snowflake/cortex/skills/sandbox-frostbyte/streamlit_template.png image as a guide for the style of the dashboard</div>
+                    </div>
+
+                    <div class="spaced-block">
+                        <p>CoCo will now create a compute pool and the external access integration (for any python libraries it needs). It will also create the file artifacts locally and then deploy them into Snowflake.</p>
+                    </div>
+                    <div class="note">
+                        <strong>Expected result:</strong> Click on the link provided by CoCo and view the Streamlit app.
+                    </div>
+                    <div class="spaced-block">
+                        <p>Optional: Continue on and have CoCo make changes to the Streamlit app...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Frostbyte Ski Supply — Cortex Code Hands-On Lab
+    </footer>
+
+    <script>
+        function copyPrompt(btn) {
+            const block = btn.parentElement;
+            const text = block.textContent.replace('Copy', '').replace('Copied!', '').trim();
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
