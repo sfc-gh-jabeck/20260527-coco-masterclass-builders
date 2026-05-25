@@ -18,11 +18,29 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
+        #bodyId,
+        #outerWrapDiv,
+        #innerWrapDiv,
+        .mktoContent,
+        .lpContentsItem,
+        .rawHtmlSpan {
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        #mktContent {
+            display: none !important;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--snow-light);
             color: var(--snow-dark);
             line-height: 1.6;
+            text-align: left;
         }
 
         .hero {
