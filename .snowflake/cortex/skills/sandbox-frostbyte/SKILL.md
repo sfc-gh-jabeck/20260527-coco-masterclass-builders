@@ -121,7 +121,8 @@ B. Prototype Pipeline  - Build a data pipeline (dbt / Dynamic Tables)
 C. Prototype App       - Scaffold a Streamlit dashboard
 D. AI/ML Experiments   - Try Cortex AI functions or train models
 E. Analytics Prototype - Build semantic views / Cortex Analyst models
-F. Open-ended sandboxes     - Freeform — tell me what you want to explore
+F. Document AI         - Extract structured data from PDFs using AI_EXTRACT
+G. Open-ended sandboxes     - Freeform — tell me what you want to explore
 
 Recommended for your team: {recommendation}
 ```
@@ -448,16 +449,155 @@ The response includes generated SQL. Execute the SQL to verify results are corre
 
 ---
 
-## Track F: Open-ended sandboxes
+## Track F: Document AI
+
+**Goal:** Extract structured data from unstructured PDF documents using Cortex AI_EXTRACT, materialize into a dimension table that joins to existing MARTS tables.
+
+### Step F1: Get PDF Location
+
+**Ask** user for the local filesystem path containing supplier contract PDFs:
+
+```
+Provide the path to the directory containing your supplier contract PDFs:
+(e.g., /Users/username/documents/supplier_contracts)
+```
+
+Validate the directory exists and contains `.pdf` files. Report the number of PDFs found.
+
+### Step F2: Create Stage & Upload
+
+**Create a named stage** in the sandbox database:
+```sql
+CREATE OR REPLACE STAGE <sandbox_name>.MARTS.SUPPLIER_CONTRACTS_STAGE
+  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
+  DIRECTORY = (ENABLE = TRUE);
+```
+
+**Upload PDFs** using Snow CLI:
+```bash
+snow stage copy <pdf_directory>/ @<sandbox_name>.MARTS.SUPPLIER_CONTRACTS_STAGE --connection <connection> --overwrite
+```
+
+**Refresh directory:**
+```sql
+ALTER STAGE <sandbox_name>.MARTS.SUPPLIER_CONTRACTS_STAGE REFRESH;
+```
+
+**Verify upload:**
+```sql
+SELECT * FROM DIRECTORY(@<sandbox_name>.MARTS.SUPPLIER_CONTRACTS_STAGE);
+```
+
+Report number of files uploaded successfully.
+
+### Step F3: Extract Structured Data with AI_EXTRACT
+
+**Create the DIM_SUPPLIER_CONTRACTS table** by running AI_EXTRACT directly on each PDF file:
+
+```sql
+CREATE OR REPLACE TRANSIENT TABLE <sandbox_name>.MARTS.DIM_SUPPLIER_CONTRACTS AS
+WITH extracted AS (
+    SELECT
+        RELATIVE_PATH AS file_name,
+        AI_EXTRACT(
+            file => TO_FILE('@<sandbox_name>.MARTS.SUPPLIER_CONTRACTS_STAGE', RELATIVE_PATH),
+            responseFormat => {
+                'supplier_name': 'The name of the supplier company',
+                'supplier_id': 'The supplier ID code starting with SUP_',
+                'contract_reference': 'The contract reference number starting with CTR-',
+                'payment_terms': 'The payment terms such as Net 30 or Net 45',
+                'lead_time_days': 'Maximum lead time in calendar days as a number only',
+                'on_time_delivery_sla_pct': 'On-time delivery target percentage as a number only',
+                'max_defect_rate_pct': 'Maximum defect rate percentage as a number only',
+                'volume_discount_pct': 'Volume discount percentage as a number only',
+                'volume_discount_threshold_units': 'Minimum units to qualify for volume discount as a number only',
+                'minimum_order_qty': 'Minimum order quantity in units as a number only',
+                'penalty_clause': 'The full penalty description for SLA non-compliance',
+                'product_categories': 'Comma-separated list of product categories the supplier provides'
+            }
+        ) AS extracted_data
+    FROM DIRECTORY(@<sandbox_name>.MARTS.SUPPLIER_CONTRACTS_STAGE)
+)
+SELECT
+    extracted_data:"response":"supplier_id"::VARCHAR AS SUPPLIER_ID,
+    extracted_data:"response":"supplier_name"::VARCHAR AS SUPPLIER_NAME,
+    extracted_data:"response":"contract_reference"::VARCHAR AS CONTRACT_REFERENCE,
+    extracted_data:"response":"payment_terms"::VARCHAR AS PAYMENT_TERMS,
+    TRY_CAST(extracted_data:"response":"lead_time_days"::VARCHAR AS NUMBER) AS LEAD_TIME_DAYS,
+    TRY_CAST(extracted_data:"response":"on_time_delivery_sla_pct"::VARCHAR AS NUMBER(5,2)) AS ON_TIME_DELIVERY_SLA_PCT,
+    TRY_CAST(extracted_data:"response":"max_defect_rate_pct"::VARCHAR AS NUMBER(5,2)) AS MAX_DEFECT_RATE_PCT,
+    TRY_CAST(extracted_data:"response":"volume_discount_pct"::VARCHAR AS NUMBER(5,2)) AS VOLUME_DISCOUNT_PCT,
+    TRY_CAST(extracted_data:"response":"volume_discount_threshold_units"::VARCHAR AS NUMBER) AS VOLUME_DISCOUNT_THRESHOLD_UNITS,
+    TRY_CAST(extracted_data:"response":"minimum_order_qty"::VARCHAR AS NUMBER) AS MINIMUM_ORDER_QTY,
+    extracted_data:"response":"penalty_clause"::VARCHAR AS PENALTY_CLAUSE,
+    extracted_data:"response":"product_categories"::VARCHAR AS PRODUCT_CATEGORIES,
+    file_name AS SOURCE_FILE
+FROM extracted;
+```
+
+**Key notes about AI_EXTRACT:**
+- Uses `file => TO_FILE(...)` syntax (named parameter) to process PDFs directly
+- The `responseFormat` is a JSON object where keys = output field names, values = extraction prompts
+- Response is nested under `extracted_data:"response":"field_name"` path
+- Use `TRY_CAST` for numeric fields to handle extraction edge cases gracefully
+
+### Step F4: Verify & Present Results
+
+**Show extracted results:**
+```sql
+SELECT * FROM <sandbox_name>.MARTS.DIM_SUPPLIER_CONTRACTS ORDER BY SUPPLIER_NAME;
+```
+
+Present a summary: number of PDFs processed, number of rows created, any NULL fields that may need attention.
+
+**Show join capability** — contract SLA vs actual procurement performance:
+```sql
+SELECT
+    c.SUPPLIER_NAME,
+    c.ON_TIME_DELIVERY_SLA_PCT AS CONTRACTED_SLA,
+    ROUND(AVG(p.ON_TIME_DELIVERY_RATE), 2) AS ACTUAL_ON_TIME_PCT,
+    CASE
+        WHEN AVG(p.ON_TIME_DELIVERY_RATE) < c.ON_TIME_DELIVERY_SLA_PCT THEN 'BREACH'
+        ELSE 'COMPLIANT'
+    END AS SLA_STATUS
+FROM <sandbox_name>.MARTS.DIM_SUPPLIER_CONTRACTS c
+JOIN <sandbox_name>.MARTS.FCT_PROCUREMENT_SUMMARY p
+    ON c.SUPPLIER_ID = p.SUPPLIER_ID
+WHERE p.ON_TIME_DELIVERY_RATE IS NOT NULL
+GROUP BY c.SUPPLIER_NAME, c.ON_TIME_DELIVERY_SLA_PCT
+ORDER BY ACTUAL_ON_TIME_PCT ASC;
+```
+
+### Step F5: Next Track
+
+**Ask** user:
+```
+Document AI extraction complete! Your DIM_SUPPLIER_CONTRACTS table is ready and joins to existing MARTS tables.
+
+What would you like to do next?
+
+A. Explore Sandbox     - Browse the new table alongside existing data
+B. Prototype Pipeline  - Build a transformation pipeline
+C. Prototype App       - Build a Streamlit dashboard over the combined data
+D. AI/ML Experiments   - Run more Cortex AI experiments
+E. Analytics Prototype - Build a semantic view covering all 3 tables
+G. Open-ended          - Freeform exploration
+```
+
+**Recommended next step:** Track E (Analytics Prototyping) — build a semantic view over all three MARTS tables (FCT_INVENTORY_HEALTH, FCT_PROCUREMENT_SUMMARY, DIM_SUPPLIER_CONTRACTS) to enable natural language queries like "Which suppliers are breaching their delivery SLA?" or "Show me stores with low stock from underperforming suppliers."
+
+---
+
+## Track G: Open-ended sandboxes
 
 **Goal:** Freeform exploration — user describes what they want to build or investigate.
 
 **Actions:**
 1. **Ask** user: "What do you want to explore or build?"
-2. Based on response, route to the most appropriate track (A-E) or handle ad-hoc
+2. Based on response, route to the most appropriate track (A-F) or handle ad-hoc
 3. Support combining tracks: "Build a pipeline (Track B) then visualize it (Track C)"
 4. Allow switching between tracks at any time
-5. If request doesn't fit any track, work with user to prototype directly using SQL and avaisandboxle tools
+5. If request doesn't fit any track, work with user to prototype directly using SQL and available tools
 
 ---
 
@@ -471,6 +611,7 @@ The response includes generated SQL. Execute the SQL to verify results are corre
 - **Track C**: Before deploying Streamlit app
 - **Track D**: Before running expensive AI/ML operations
 - **Track E**: Before deploying semantic model
+- **Track F**: Before running AI_EXTRACT (confirm PDF directory and stage name)
 
 **Resume rule:** On user approval, proceed directly to next step without re-asking.
 
